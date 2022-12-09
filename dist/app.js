@@ -18,7 +18,6 @@ require('./database');
 const whiteList = [
   'https://react.vagnercoelho.dev',
   'http://localhost:3000',
-  'https://pt.wikipedia.org',
 ];
 
 const corsOptions = {
