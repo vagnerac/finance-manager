@@ -6,6 +6,7 @@ var _express = require('express'); var _express2 = _interopRequireDefault(_expre
 var _cors = require('cors'); var _cors2 = _interopRequireDefault(_cors);
 var _helmet = require('helmet'); var _helmet2 = _interopRequireDefault(_helmet);
 var _userRoutes = require('./routes/userRoutes'); var _userRoutes2 = _interopRequireDefault(_userRoutes);
+var _homeRoutes = require('./routes/homeRoutes'); var _homeRoutes2 = _interopRequireDefault(_homeRoutes);
 var _tokenRoutes = require('./routes/tokenRoutes'); var _tokenRoutes2 = _interopRequireDefault(_tokenRoutes);
 var _accountTypeRoutes = require('./routes/accountTypeRoutes'); var _accountTypeRoutes2 = _interopRequireDefault(_accountTypeRoutes);
 var _accountRoutes = require('./routes/accountRoutes'); var _accountRoutes2 = _interopRequireDefault(_accountRoutes);
@@ -45,6 +46,7 @@ class App {
   }
 
   routes() {
+    this.app.use('/', _homeRoutes2.default);
     this.app.use('/user/', _userRoutes2.default);
     this.app.use('/token/', _tokenRoutes2.default);
     this.app.use('/accountType/', _accountTypeRoutes2.default);

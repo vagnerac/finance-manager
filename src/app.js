@@ -6,6 +6,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import userRoutes from './routes/userRoutes';
+import homeRoutes from './routes/homeRoutes';
 import tokenRoutes from './routes/tokenRoutes';
 import accountTypeRoutes from './routes/accountTypeRoutes';
 import accountRoutes from './routes/accountRoutes';
@@ -45,6 +46,7 @@ class App {
   }
 
   routes() {
+    this.app.use('/', homeRoutes);
     this.app.use('/user/', userRoutes);
     this.app.use('/token/', tokenRoutes);
     this.app.use('/accountType/', accountTypeRoutes);
