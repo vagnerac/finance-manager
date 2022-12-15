@@ -8,7 +8,7 @@ const router = new Router();
 // Create
 // router.post('/', homeController.store);
 // Find all - não necessário
-router.get('/', homeController.index);
+router.get('', homeController.index);
 // Update
 // router.put('/', loginRequired, homeController.update);
 // Delete
