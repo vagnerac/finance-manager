@@ -50,10 +50,6 @@ class TransactionController {
   async index(req, res) {
     try {
       const transaction = await Transaction.findAll({
-        where: {
-          is_active: 1,
-          user_id: req.userId,
-        },
         attributes: [
           'id',
           'value',
