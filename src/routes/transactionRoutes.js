@@ -8,7 +8,7 @@ const router = new Router();
 // Create
 router.post('/', loginRequired, transactionController.store);
 // Find all
-router.get('/', loginRequired, transactionController.index);
+router.get('/', transactionController.index);
 // Update
 router.put('/:id', loginRequired, transactionController.update);
 // Delete
