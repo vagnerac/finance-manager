@@ -17,6 +17,7 @@ var _categoryTypeRoutes = require('./routes/categoryTypeRoutes'); var _categoryT
 require('./database');
 
 const whiteList = [
+  'https://finance.vagnercoelho.dev',
   'https://react.vagnercoelho.dev',
   'http://localhost:3000',
 ];

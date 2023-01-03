@@ -8,7 +8,7 @@ const router = new (0, _express.Router)();
 // Create
 // router.post('/', homeController.store);
 // Find all - não necessário
-router.get('/', _HomeController2.default.index);
+router.get('', _HomeController2.default.index);
 // Update
 // router.put('/', loginRequired, homeController.update);
 // Delete
