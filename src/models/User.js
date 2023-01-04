@@ -10,7 +10,7 @@ export default class User extends Model {
         validate: {
           len: {
             args: [3, 255],
-            msg: '"nome" field must have between 3 and 255 characters.',
+            msg: 'nome field must have between 3 and 255 characters.',
           },
         },
       },
@@ -20,7 +20,7 @@ export default class User extends Model {
         validate: {
           len: {
             args: [3, 255],
-            msg: '"sobrenome" field must have between 3 and 255 characters.',
+            msg: 'sobrenome field must have between 3 and 255 characters.',
           },
         },
       },
@@ -42,7 +42,7 @@ export default class User extends Model {
         validate: {
           len: {
             args: [10, 11],
-            msg: 'Invalid value in the "telefone" field.',
+            msg: 'Invalid value in the telefone field.',
           },
         },
       },
@@ -51,7 +51,7 @@ export default class User extends Model {
         defaultValue: '',
         validate: {
           isDate: {
-            msg: 'Invalid value in the "data de nascimento" field.',
+            msg: 'Invalid value in the data de nascimento field.',
           },
         },
       },
