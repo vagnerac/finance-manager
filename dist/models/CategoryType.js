@@ -31,8 +31,4 @@
 
     return this;
   }
-
-  static associate(models) {
-    this.belongsTo(models.TransactionCategory);
-  }
 } exports.default = CategoryType;

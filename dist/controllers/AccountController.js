@@ -1,19 +1,34 @@
 "use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }var _Account = require('../models/Account'); var _Account2 = _interopRequireDefault(_Account);
-var _Transaction = require('../models/Transaction'); var _Transaction2 = _interopRequireDefault(_Transaction);
+// import Transaction from '../models/Transaction';
+var _AccountType = require('../models/AccountType'); var _AccountType2 = _interopRequireDefault(_AccountType);
 
 class AccountController {
   // store
   async store(req, res) {
     try {
-      const newAccount = await _Account2.default.create(req.body);
+      const accountTypeID = await _AccountType2.default.findByPk(req.body.accountTypeID);
 
-      const {
-        id, name, description, account_type_id: accountTypeID, is_active: isActive,
-      } = newAccount;
+      if (!accountTypeID) {
+        return res.status(400).json({
+          errors: ['Account Type not found.'],
+        });
+      }
 
-      return res.json({
-        id, name, description, account_type_id: accountTypeID, is_active: isActive,
+      const accountDB = await _Account2.default.create({
+        name: req.body.name,
+        description: req.body.description,
+        account_type_id: req.body.accountTypeID,
+        is_active: req.body.isActive,
       });
+
+      const account = {
+        name: accountDB.name,
+        description: accountDB.description,
+        accountTypeID: accountDB.account_type_id,
+        isActive: accountDB.is_active,
+      };
+
+      return res.json(account);
     } catch (e) {
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
@@ -24,25 +39,32 @@ class AccountController {
   // index
   async index(req, res) {
     try {
-      const account = await _Account2.default.findAll(
-        {
-          attributes: ['id', 'name', 'description', 'account_type_id', 'is_active'],
-          order: [['id', 'ASC'], [_Transaction2.default, 'transaction_date', 'DESC']],
-          include: {
-            model: _Transaction2.default,
-            attributes: [
-              'id',
-              'description',
-              'value',
-              'transaction_date',
-              'transaction_category_id',
-            ],
-          },
-        },
-      );
+      // const account = await Account.findAll(
+      //   {
+      //     attributes: ['id', 'name', 'description', 'account_type_id', 'is_active'],
+      //     order: [['id', 'ASC'], [Transaction, 'transaction_date', 'DESC']],
+      //     include: {
+      //       model: Transaction,
+      //       attributes: [
+      //         'id',
+      //         'description',
+      //         'value',
+      //         'transaction_date',
+      //         'transaction_category_id',
+      //       ],
+      //     },
+      //   },
+      const account = await _Account2.default.findAll({
+        attributes: [
+          'id',
+          'name',
+          'description',
+          ['account_type_id', 'accountTypeID'],
+          ['is_active', 'isActive'],
+        ],
+      });
       return res.json(account);
     } catch (e) {
-      console.log(e);
       return res.json('null');
     }
   }
@@ -50,13 +72,17 @@ class AccountController {
   // show
   async show(req, res) {
     try {
-      const account = await _Account2.default.findByPk(req.params.id);
-      const {
-        id, name, description, account_type_id: accountTypeID, is_active: isActive,
-      } = account;
-      return res.json({
-        id, name, description, account_type_id: accountTypeID, is_active: isActive,
-      });
+      const accountDB = await _Account2.default.findByPk(req.params.id);
+
+      const account = {
+        id: accountDB.id,
+        name: accountDB.name,
+        description: accountDB.description,
+        accountTypeID: accountDB.account_type_id,
+        isActive: accountDB.is_active,
+      };
+
+      return res.json(account);
     } catch (e) {
       return res.json('null');
     }
@@ -65,6 +91,17 @@ class AccountController {
   // update
   async update(req, res) {
     try {
+      if (req.body.accountTypeID) {
+        const accountTypeID = await _AccountType2.default.findByPk(req.body.accountTypeID);
+
+        if (!accountTypeID) {
+          return res.status(400).json({
+            errors: ['Account Type not found.'],
+          });
+        }
+      }
+
+      console.log(req.account);
       const account = await _Account2.default.findByPk(req.params.id);
 
       if (!account) {
@@ -73,15 +110,22 @@ class AccountController {
         });
       }
 
-      const updatedAccount = await account.update(req.body);
-
-      const {
-        id, name, description, account_type_id: accountTypeID, is_active: isActive,
-      } = updatedAccount;
-
-      return res.json({
-        id, name, description, account_type_id: accountTypeID, is_active: isActive,
+      const accountDB = await account.update({
+        name: req.body.name,
+        description: req.body.description,
+        account_type_id: req.body.accountTypeID,
+        is_active: req.body.isActive,
       });
+
+      const updatedAccount = {
+        id: accountDB.id,
+        name: accountDB.name,
+        description: accountDB.description,
+        accountTypeID: accountDB.account_type_id,
+        isActive: accountDB.is_active,
+      };
+
+      return res.json(updatedAccount);
     } catch (e) {
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
@@ -92,23 +136,25 @@ class AccountController {
   // delete
   async delete(req, res) {
     try {
-      const account = await _Account2.default.findByPk(req.params.id);
+      const accountDB = await _Account2.default.findByPk(req.params.id);
 
-      if (!account) {
+      if (!accountDB) {
         return res.status(400).json({
           errors: ['account not found.'],
         });
       }
 
-      const {
-        id, name, description, account_type_id: accountTypeID, is_active: isActive,
-      } = account;
+      await accountDB.destroy();
 
-      await account.destroy();
+      const account = {
+        id: accountDB.id,
+        name: accountDB.name,
+        description: accountDB.description,
+        accountTypeID: accountDB.account_type_id,
+        isActive: accountDB.is_active,
+      };
 
-      return res.json({
-        id, name, description, account_type_id: accountTypeID, is_active: isActive,
-      });
+      return res.json(account);
     } catch (e) {
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),

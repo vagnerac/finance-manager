@@ -4,15 +4,19 @@ class AccountTypeController {
   // store
   async store(req, res) {
     try {
-      const newAccountType = await _AccountType2.default.create(req.body);
-
-      const {
-        id, name, description, is_active: isActive,
-      } = newAccountType;
-
-      return res.json({
-        id, name, description, is_active: isActive,
+      const newAccountType = await _AccountType2.default.create({
+        name: req.body.name,
+        description: req.body.description,
+        is_active: req.body.isActive,
       });
+
+      const accountType = {
+        name: newAccountType.name,
+        description: newAccountType.description,
+        isActive: newAccountType.is_active,
+      };
+
+      return res.json(accountType);
     } catch (e) {
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
@@ -23,7 +27,14 @@ class AccountTypeController {
   // index
   async index(req, res) {
     try {
-      const accountType = await _AccountType2.default.findAll({ attributes: ['id', 'name', 'description', 'is_active'] });
+      const accountType = await _AccountType2.default.findAll({
+        attributes: [
+          'id',
+          'name',
+          'description',
+          ['is_active', 'isActive'],
+        ],
+      });
       return res.json(accountType);
     } catch (e) {
       return res.json('null');
@@ -33,13 +44,16 @@ class AccountTypeController {
   // show
   async show(req, res) {
     try {
-      const accountType = await _AccountType2.default.findByPk(req.params.id);
-      const {
-        id, name, description, is_active: isActive,
-      } = accountType;
-      return res.json({
-        id, name, description, is_active: isActive,
-      });
+      const accountTypeDB = await _AccountType2.default.findByPk(req.params.id);
+
+      const accountType = {
+        id: accountTypeDB.id,
+        name: accountTypeDB.name,
+        description: accountTypeDB.description,
+        isActive: accountTypeDB.is_active,
+      };
+
+      return res.json(accountType);
     } catch (e) {
       return res.json('null');
     }
@@ -57,15 +71,20 @@ class AccountTypeController {
         });
       }
 
-      const updatedAccountType = await accountType.update(req.body);
-
-      const {
-        id, name, description, is_active: isActive,
-      } = updatedAccountType;
-
-      return res.json({
-        id, name, description, is_active: isActive,
+      const accountTypeDB = await accountType.update({
+        name: req.body.name,
+        description: req.body.description,
+        is_active: req.body.isActive,
       });
+
+      const updatedAccountType = {
+        id: accountTypeDB.id,
+        name: accountTypeDB.name,
+        description: accountTypeDB.description,
+        isActive: accountTypeDB.is_active,
+      };
+
+      return res.json(updatedAccountType);
     } catch (e) {
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
@@ -76,23 +95,24 @@ class AccountTypeController {
   // delete
   async delete(req, res) {
     try {
-      const accountType = await _AccountType2.default.findByPk(req.accountTypeId);
+      const accountTypeDB = await _AccountType2.default.findByPk(req.params.id);
 
-      if (!accountType) {
+      if (!accountTypeDB) {
         return res.status(400).json({
           errors: ['accountType not found.'],
         });
       }
 
-      const {
-        id, name, description, is_active: isActive,
-      } = accountType;
+      await accountTypeDB.destroy();
 
-      await accountType.destroy();
+      const accountType = {
+        id: accountTypeDB.id,
+        name: accountTypeDB.name,
+        description: accountTypeDB.description,
+        isActive: accountTypeDB.is_active,
+      };
 
-      return res.json({
-        id, name, description, is_active: isActive,
-      });
+      return res.json(accountType);
     } catch (e) {
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),

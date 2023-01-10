@@ -4,17 +4,19 @@ class CategoryTypeController {
   // store
   async store(req, res) {
     try {
-      console.log(req.body);
-      const newCategoryType = await _CategoryType2.default.create(req.body);
-      console.log(newCategoryType);
-
-      const {
-        id, name, description, is_active: isActive,
-      } = newCategoryType;
-
-      return res.json({
-        id, name, description, is_active: isActive,
+      const newCategoryType = await _CategoryType2.default.create({
+        name: req.body.name,
+        description: req.body.description,
+        is_active: req.body.isActive,
       });
+
+      const categoryType = {
+        name: newCategoryType.name,
+        description: newCategoryType.description,
+        isActive: newCategoryType.is_active,
+      };
+
+      return res.json(categoryType);
     } catch (e) {
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
@@ -25,7 +27,15 @@ class CategoryTypeController {
   // index
   async index(req, res) {
     try {
-      const categoryType = await _CategoryType2.default.findAll({ attributes: ['id', 'name', 'description', 'is_active'] });
+      const categoryType = await _CategoryType2.default.findAll({
+        attributes: [
+          'id',
+          'name',
+          'description',
+          ['is_active', 'isActive'],
+        ],
+      });
+
       return res.json(categoryType);
     } catch (e) {
       return res.json('null');
@@ -35,13 +45,15 @@ class CategoryTypeController {
   // show
   async show(req, res) {
     try {
-      const categoryType = await _CategoryType2.default.findByPk(req.params.id);
-      const {
-        id, name, description, is_active: isActive,
-      } = categoryType;
-      return res.json({
-        id, name, description, is_active: isActive,
-      });
+      const categoryTypeDB = await _CategoryType2.default.findByPk(req.params.id);
+
+      const categoryType = {
+        id: categoryTypeDB.id,
+        name: categoryTypeDB.name,
+        description: categoryTypeDB.description,
+        isActive: categoryTypeDB.is_active,
+      };
+      return res.json(categoryType);
     } catch (e) {
       return res.json('null');
     }
@@ -58,15 +70,19 @@ class CategoryTypeController {
         });
       }
 
-      const updatedCategoryType = await _CategoryType2.default.update(req.body);
-
-      const {
-        id, name, description, is_active: isActive,
-      } = updatedCategoryType;
-
-      return res.json({
-        id, name, description, is_active: isActive,
+      const CategoryTypeDB = await _CategoryType2.default.update({
+        name: req.body.name,
+        description: req.body.description,
+        is_active: req.body.isActive,
       });
+
+      const updatedCategoryType = {
+        id: CategoryTypeDB.id,
+        name: CategoryTypeDB.name,
+        description: CategoryTypeDB.description,
+        isActive: CategoryTypeDB.is_active,
+      };
+      return res.json(updatedCategoryType);
     } catch (e) {
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
@@ -77,23 +93,23 @@ class CategoryTypeController {
   // delete
   async delete(req, res) {
     try {
-      const categoryType = await _CategoryType2.default.findByPk(req.params.id);
+      const categoryTypeDB = await _CategoryType2.default.findByPk(req.params.id);
 
-      if (!categoryType) {
+      if (!categoryTypeDB) {
         return res.status(400).json({
           errors: ['CategoryTtype not found.'],
         });
       }
 
-      const {
-        id, name, description, is_active: isActive,
-      } = categoryType;
+      await categoryTypeDB.destroy();
 
-      await _CategoryType2.default.destroy();
-
-      return res.json({
-        id, name, description, is_active: isActive,
-      });
+      const categoryType = {
+        id: categoryTypeDB.id,
+        name: categoryTypeDB.name,
+        description: categoryTypeDB.description,
+        isActive: categoryTypeDB.is_active,
+      };
+      return res.json(categoryType);
     } catch (e) {
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),

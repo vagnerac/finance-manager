@@ -11,9 +11,9 @@ exports. default = async (req, res, next) => {
   }
 
   const [, token] = authorization.split(' ');
-
   try {
     const userData = _jsonwebtoken2.default.verify(token, process.env.TOKEN_SECRET);
+
     const { id, email } = userData;
 
     const user = await _User2.default.findOne({
