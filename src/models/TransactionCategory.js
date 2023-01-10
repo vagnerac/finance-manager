@@ -45,6 +45,10 @@ export default class TransactionCategory extends Model {
     return this;
   }
 
+  static associate(models) {
+    this.belongsTo(models.CategoryType, { foreignKey: 'category_type_id' });
+  }
+
   // static associate(models) {
   //  this.hasOne(models.TransactionType, { foreignKey: 'type_id' });
   // }

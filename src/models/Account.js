@@ -47,5 +47,6 @@ export default class Account extends Model {
 
   static associate(models) {
     this.hasMany(models.Transaction, { foreignKey: 'account_id' });
+    this.belongsTo(models.AccountType, { foreignKey: 'account_type_id' });
   }
 }

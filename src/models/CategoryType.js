@@ -31,8 +31,4 @@ export default class CategoryType extends Model {
 
     return this;
   }
-
-  static associate(models) {
-    this.belongsTo(models.TransactionCategory);
-  }
 }

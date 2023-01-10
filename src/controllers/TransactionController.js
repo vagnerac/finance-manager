@@ -7,37 +7,50 @@ class TransactionController {
   // store
   async store(req, res) {
     try {
-      const newTransaction = await Transaction.create({
+      const transactionCategory = await TransactionCategory.findByPk(
+        req.body.transactionCategoryID,
+      );
+
+      if (!transactionCategory) {
+        return res.status(400).json({
+          errors: ['Category not found.'],
+        });
+      }
+
+      const accountID = await Account.findByPk(req.body.accountID);
+
+      if (!accountID) {
+        return res.status(400).json({
+          errors: ['Account not found.'],
+        });
+      }
+
+      const transaction = {
         value: req.body.value,
         description: req.body.description,
-        transaction_date: req.body.transaction_date,
-        transaction_category_id: req.body.transaction_category_id,
-        account_id: req.body.account_id,
-        is_active: req.body.is_active,
-        user_id: req.userId,
-      });
+        transaction_date: req.body.transactionDate,
+        transaction_category_id: req.body.transactionCategoryID,
+        account_id: req.body.accountID,
+        is_active: req.body.isActive,
+        user_id: req.userID,
+      };
 
-      const {
-        id,
-        value,
-        description,
-        transaction_date: transactionDate,
-        transaction_category_id: transactionCategoryID,
-        account_id: accountID,
-        is_active: isActive,
-        user_id: userID,
-      } = newTransaction;
+      const newTransaction = await Transaction.create(transaction);
 
-      return res.json({
-        id,
-        value,
-        description,
-        transaction_date: transactionDate,
-        transaction_category_id: transactionCategoryID,
-        account_id: accountID,
-        is_active: isActive,
-        user_id: userID,
-      });
+      const outputTransaction = {
+        id: newTransaction.id,
+        value: newTransaction.value,
+        description: newTransaction.description,
+        transactionDate: newTransaction.transaction_date,
+        transactionCategoryID: newTransaction.transaction_category_id,
+        accountID: newTransaction.account_id,
+        isActive: newTransaction.is_active,
+        userID: newTransaction.user_id,
+        updatedAt: newTransaction.updated_at,
+        createdAt: newTransaction.created_at,
+      };
+
+      return res.json(outputTransaction);
     } catch (e) {
       console.log(e);
       return res.status(400).json({
@@ -54,9 +67,9 @@ class TransactionController {
           'id',
           'value',
           'description',
-          'transaction_date',
-          'is_active',
-          'user_id',
+          ['transaction_date', 'transactionDate'],
+          ['is_active', 'isActive'],
+          ['user_id', 'userID'],
         ],
         order: [['transaction_date', 'DESC']],
         include:
@@ -67,7 +80,7 @@ class TransactionController {
               'id',
               'name',
               'description',
-              'category_type_id',
+              ['category_type_id', 'categoryTypeID'],
             ],
           },
           {
@@ -83,32 +96,25 @@ class TransactionController {
       return res.json(transaction);
     } catch (e) {
       console.log(e);
-      return res.json('no one record found.');
+      return res.json('No records found.');
     }
   }
 
   // show
   async show(req, res) {
     try {
-      const transaction = await Transaction.findByPk(req.params.id);
-      const {
-        id,
-        value,
-        description,
-        transaction_date: transactionDate,
-        transaction_category_id: transactionCategoryID,
-        account_id: accountID,
-        is_active: isActive,
-      } = transaction;
-      return res.json({
-        id,
-        value,
-        description,
-        transaction_date: transactionDate,
-        transaction_category_id: transactionCategoryID,
-        account_id: accountID,
-        is_active: isActive,
-      });
+      const transactionDB = await Transaction.findByPk(req.params.id);
+
+      const transaction = {
+        id: transactionDB.id,
+        value: transactionDB.value,
+        description: transactionDB.value,
+        transactionDate: transactionDB.transaction_date,
+        transactionCategoryID: transactionDB.transaction_category_id,
+        accountID: transactionDB.account_id,
+        isActive: transactionDB.is_active,
+      };
+      return res.json(transaction);
     } catch (e) {
       return res.json('null');
     }
@@ -117,35 +123,59 @@ class TransactionController {
   // update
   async update(req, res) {
     try {
-      const transaction = await Transaction.findByPk(req.params.id);
+      if (req.body.transactionCategoryID) {
+        const transactionCategory = await TransactionCategory.findByPk(
+          req.body.transactionCategoryID,
+        );
 
-      if (!transaction) {
+        if (!transactionCategory) {
+          return res.status(400).json({
+            errors: ['Category not found.'],
+          });
+        }
+      }
+
+      if (req.body.accountID) {
+        const accountID = await Account.findByPk(req.body.accountID);
+
+        if (!accountID) {
+          return res.status(400).json({
+            errors: ['Account not found.'],
+          });
+        }
+      }
+
+      const transactionDB = await Transaction.findByPk(req.params.id);
+
+      if (!transactionDB) {
         return res.status(400).json({
           errors: ['Transaction  not found.'],
         });
       }
 
-      const updatedTransaction = await transaction.update(req.body);
+      const transactionData = {
+        id: req.body.id,
+        value: req.body.value,
+        description: req.body.description,
+        transaction_date: req.body.transactionDate,
+        transaction_category_id: req.body.transactionCategoryID,
+        account_id: req.body.accountID,
+        is_active: req.body.isActive,
+      };
 
-      const {
-        id,
-        value,
-        description,
-        transaction_date: transactionDate,
-        transaction_category_id: transactionCategoryID,
-        account_id: accountID,
-        is_active: isActive,
-      } = updatedTransaction;
+      const updatedTransaction = await transactionDB.update(transactionData);
 
-      return res.json({
-        id,
-        value,
-        description,
-        transaction_date: transactionDate,
-        transaction_category_id: transactionCategoryID,
-        account_id: accountID,
-        is_active: isActive,
-      });
+      const transaction = {
+        id: updatedTransaction.id,
+        value: updatedTransaction.value,
+        description: updatedTransaction.description,
+        transactionDate: updatedTransaction.transaction_date,
+        transactionCategoryID: updatedTransaction.transaction_category_id,
+        accountID: updatedTransaction.account_id,
+        isActive: updatedTransaction.is_active,
+      };
+
+      return res.json(transaction);
     } catch (e) {
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),
@@ -156,35 +186,27 @@ class TransactionController {
   // delete
   async delete(req, res) {
     try {
-      const transaction = await Transaction.findByPk(req.params.id);
+      const transactionDB = await Transaction.findByPk(req.params.id);
 
-      if (!transaction) {
+      if (!transactionDB) {
         return res.status(400).json({
-          errors: ['Transaction  not found.'],
+          errors: ['Transaction not found.'],
         });
       }
 
-      const {
-        id,
-        value,
-        description,
-        transaction_date: transactionDate,
-        transaction_category_id: transactionCategoryID,
-        account_id: accountID,
-        is_active: isActive,
-      } = transaction;
+      await transactionDB.destroy();
 
-      await transaction.destroy();
+      const transaction = {
+        id: transactionDB.id,
+        value: transactionDB.value,
+        description: transactionDB.value,
+        transactionDate: transactionDB.transaction_date,
+        transactionCategoryID: transactionDB.transaction_category_id,
+        accountID: transactionDB.account_id,
+        isActive: transactionDB.is_active,
+      };
 
-      return res.json({
-        id,
-        value,
-        description,
-        transaction_date: transactionDate,
-        transaction_category_id: transactionCategoryID,
-        account_id: accountID,
-        is_active: isActive,
-      });
+      return res.json(transaction);
     } catch (e) {
       return res.status(400).json({
         errors: e.errors.map((err) => err.message),

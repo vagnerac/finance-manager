@@ -14,6 +14,6 @@ router.put('/', loginRequired, userController.update);
 // Delete
 router.delete('/', loginRequired, userController.delete);
 // Find one - não necessário por enquanto
-// router.get('/', loginRequired, userController.show);
+router.get('/id/', loginRequired, userController.show);
 
 export default router;
