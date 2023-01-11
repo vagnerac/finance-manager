@@ -84,15 +84,24 @@ class UserController {
         });
       }
 
-      const updatedUser = await user.update(req.body);
+      const userData = {
+        id: req.body.id,
+        email: req.body.email,
+        nome: req.body.name,
+        sobrenome: req.body.lastName,
+        data_de_nascimento: req.body.birthDate,
+        telefone: req.body.phone,
+      };
+
+      const updatedUser = await user.update(userData);
 
       const updatedUserRest = {
         id: updatedUser.dataValues.id,
         email: updatedUser.dataValues.email,
-        name: updatedUser.dataValues.name,
-        lastName: updatedUser.dataValues.lastName,
-        birthDate: updatedUser.dataValues.birthDate,
-        phone: updatedUser.dataValues.phone,
+        name: updatedUser.dataValues.nome,
+        lastName: updatedUser.dataValues.sobrenome,
+        birthDate: updatedUser.dataValues.data_de_nascimento,
+        phone: updatedUser.dataValues.telefone,
       };
 
       return res.json(updatedUserRest);
