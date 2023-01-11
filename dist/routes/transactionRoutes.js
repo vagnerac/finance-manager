@@ -8,7 +8,7 @@ const router = new (0, _express.Router)();
 // Create
 router.post('/', _loginRequired2.default, _TransactionController2.default.store);
 // Find all
-router.get('/', _loginRequired2.default, _TransactionController2.default.index);
+router.get('/', _TransactionController2.default.index);
 // Update
 router.put('/:id', _loginRequired2.default, _TransactionController2.default.update);
 // Delete
