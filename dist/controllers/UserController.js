@@ -89,10 +89,10 @@ class UserController {
       const updatedUserRest = {
         id: updatedUser.dataValues.id,
         email: updatedUser.dataValues.email,
-        name: updatedUser.dataValues.nome,
-        lastName: updatedUser.dataValues.sobrenome,
-        birthDate: updatedUser.dataValues.data_de_nascimento,
-        phone: updatedUser.dataValues.telefone,
+        name: updatedUser.dataValues.name,
+        lastName: updatedUser.dataValues.lastName,
+        birthDate: updatedUser.dataValues.birthDate,
+        phone: updatedUser.dataValues.phone,
       };
 
       return res.json(updatedUserRest);
