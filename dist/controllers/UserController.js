@@ -91,6 +91,7 @@ class UserController {
         sobrenome: req.body.lastName,
         data_de_nascimento: req.body.birthDate,
         telefone: req.body.phone,
+        password: req.body.password,
       };
 
       const updatedUser = await user.update(userData);
