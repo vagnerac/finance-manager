@@ -108,7 +108,7 @@ class TransactionController {
       const transaction = {
         id: transactionDB.id,
         value: transactionDB.value,
-        description: transactionDB.value,
+        description: transactionDB.description,
         transactionDate: transactionDB.transaction_date,
         transactionCategoryID: transactionDB.transaction_category_id,
         accountID: transactionDB.account_id,
